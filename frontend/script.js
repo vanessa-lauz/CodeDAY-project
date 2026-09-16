@@ -2,12 +2,10 @@ const botao = document.getElementById("botao");
 const texto = document.getElementById("texto");
 const resultado = document.getElementById("resultado");
 const status = document.getElementById("status");
+
 let aguardandoEsclarecimento = false;
 let textoAnterior = "";
-let textoParaEnviar = textoDigitado;
-if (aguardandoEsclarecimento) {
-    textoParaEnviar = textoAnterior + ". A pessoa esclareceu que quer ajudar " + textoDigitado + ".";
-}
+
 botao.addEventListener("click", async () => {
 
     const textoDigitado = texto.value.trim();
@@ -17,31 +15,27 @@ botao.addEventListener("click", async () => {
         return;
     }
 
+    let textoParaEnviar = textoDigitado;
+
+    if (aguardandoEsclarecimento) {
+        textoParaEnviar = textoAnterior + ". A pessoa esclareceu que quer ajudar " + textoDigitado + ".";
+    }
+
     status.textContent = "Buscando uma recomendação...";
     resultado.innerHTML = "";
 
     try {
 
-        const resposta = await fetch(
-            "https://codeday-project.onrender.com/classificar",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    texto: textoParaEnviar
-                })
-            }
-        );
+        const resposta = await fetch("https://codeday-project.onrender.com/classificar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ texto: textoParaEnviar })
+        });
 
         const dados = await resposta.json();
 
-        if (!resposta.ok) {
-            throw new Error(dados.erro || "Erro ao consultar o servidor.");
-        }
+        if (!resposta.ok) throw new Error(dados.erro || "Erro ao consultar o servidor.");
+
         if (dados.precisaEsclarecimento) {
             textoAnterior = textoDigitado;
             aguardandoEsclarecimento = true;
@@ -56,30 +50,21 @@ botao.addEventListener("click", async () => {
             status.textContent = "";
             return;
         }
+
         status.textContent = "";
         aguardandoEsclarecimento = false;
         textoAnterior = "";
+
         resultado.innerHTML = `
             <h2>Recomendamos:</h2>
-
             <h3>${dados.ong}</h3>
-
             <p>${dados.descricao}</p>
-
             <h4>Necessidades:</h4>
-
-            <ul>
-                ${dados.necessidades
-                    .map(necessidade => `<li>${necessidade}</li>`)
-                    .join("")}
-            </ul>
+            <ul>${dados.necessidades.map(necessidade => `<li>${necessidade}</li>`).join("")}</ul>
         `;
 
     } catch (erro) {
-
-        status.textContent =
-            "Não foi possível obter uma recomendação.";
-
+        status.textContent = "Não foi possível obter uma recomendação.";
         console.error(erro);
     }
 });
