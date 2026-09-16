@@ -37,7 +37,11 @@ botao.addEventListener("click", async () => {
         if (!resposta.ok) {
             throw new Error(dados.erro || "Erro ao consultar o servidor.");
         }
-
+        if (dados.mensagem) {
+            resultado.innerHTML = `<h2>Não encontramos uma oportunidade</h2><p>${dados.mensagem}</p>`;
+            status.textContent = "";
+            return;
+        }
         status.textContent = "";
 
         resultado.innerHTML = `
