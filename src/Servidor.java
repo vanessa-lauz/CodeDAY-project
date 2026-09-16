@@ -80,7 +80,7 @@ public class Servidor {
                     categoria = classificador.classificar(texto);
                 } catch (RuntimeException e) {
                     if ("LIMITE_GEMINI".equals(e.getMessage())) {
-                        enviarResposta(exchange, 429, "{\"erro\":\"limite_gemini\",\"mensagem\":\"O serviço de IA atingiu temporariamente o limite de uso. Isso não é um erro do sistema. Tente novamente em aproximadamente 1 minuto.\"}");
+                        enviarResposta(exchange, 429, "{\"erro\":\"limite_gemini\",\"mensagem\":\"O serviço de IA atingiu temporariamente o limite de uso disponivel no momento. Isso não é um erro do sistema. Tente novamente mais tarde.\"}");
                         return;
                     }
                     throw e;
