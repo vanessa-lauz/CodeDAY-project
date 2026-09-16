@@ -96,16 +96,16 @@ public class ClassificadorIA {
                 || textoMinusculo.contains("medicamento")
                 || textoMinusculo.contains("medicamentos")) {
 
-            return "combate_ao_cancer";
+            return "combate ao cancer";
         }
 
         if (textoMinusculo.contains("deficiência")
                 || textoMinusculo.contains("deficiencia")
                 || textoMinusculo.contains("pcd")) {
 
-            return "pessoas_com_deficiencia";
+            return "pessoas com deficiencia";
         }
 
-        return "fora_do_escopo";
+        return "fora do escopo";
     }
 }
