@@ -81,8 +81,8 @@ public class Servidor {
                     enviarResposta(exchange, 200, "{\"mensagem\":\"Não encontramos uma oportunidade compatível. Tente descrever como gostaria de ajudar.\"}");
                     return;
                 }
-                if (categoria.equals("fora do escopo")) {
-                    enviarResposta(exchange, 200,"{\"mensagem\":\"Não encontramos uma oportunidade compatível. Tente descrever como gostaria de ajudar.\"}");
+                if (categoria.equals("indefinido")) {
+                    enviarResposta(exchange, 200, "{\"precisaEsclarecimento\":true,\"mensagem\":\"Para quem você gostaria de contribuir: animais, pessoas com deficiência ou pessoas afetadas pelo câncer?\"}");
                     return;
                 }
                 // Procura ONG compatível
