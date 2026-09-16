@@ -71,6 +71,32 @@ public class Servidor {
                 0
         );
 
+        server.createContext("/", exchange -> {
+
+            if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+
+            String caminho = exchange.getRequestURI().getPath();
+
+            if (caminho.equals("/") || caminho.equals("/index.html")) {
+
+                enviarArquivo(exchange, "frontend/index.html", "text/html; charset=UTF-8");
+
+            } else if (caminho.equals("/style.css")) {
+
+                enviarArquivo(exchange, "frontend/style.css", "text/css; charset=UTF-8");
+
+            } else if (caminho.equals("/script.js")) {
+
+                enviarArquivo(exchange, "frontend/script.js", "application/javascript; charset=UTF-8");
+
+            } else {
+
+                exchange.sendResponseHeaders(404, -1);
+            }
+        });
 
         // =========================
         // CRIA O ENDPOINT
@@ -233,6 +259,37 @@ public class Servidor {
     // ==========================================================
     // MONTA O JSON QUE SERÁ DEVOLVIDO
     // ==========================================================
+    private static void enviarArquivo(
+            com.sun.net.httpserver.HttpExchange exchange,
+            String caminho,
+            String tipoConteudo) throws IOException {
+
+        try {
+
+            java.nio.file.Path arquivo =
+                    java.nio.file.Path.of(caminho);
+
+            byte[] conteudo =
+                    java.nio.file.Files.readAllBytes(arquivo);
+
+            exchange.getResponseHeaders().set(
+                    "Content-Type",
+                    tipoConteudo
+            );
+
+            exchange.sendResponseHeaders(
+                    200,
+                    conteudo.length
+            );
+
+            exchange.getResponseBody().write(conteudo);
+            exchange.getResponseBody().close();
+
+        } catch (IOException e) {
+
+            exchange.sendResponseHeaders(404, -1);
+        }
+    }
 
     private static String montarJson(
             ONG ong,

@@ -7,6 +7,9 @@ WORKDIR /app
 #copia a pasta src do projeto(arquivos do proj) pro container
 COPY src /app/src
 
+# Copia o frontend para dentro do container
+COPY frontend /app/frontend
+
 #compíla os arquivos java
 RUN javac -d /app/out /app/src/*.java
 #diz a porta usada pelo server
