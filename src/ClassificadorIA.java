@@ -32,7 +32,7 @@ public class ClassificadorIA {
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .timeout(Duration.ofSeconds(60))
                     .build();
-
+            System.out.println("JSON enviado: " + json);
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
