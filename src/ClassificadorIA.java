@@ -17,7 +17,7 @@ public class ClassificadorIA {
             String json = """
                     {
                       "model": "gemini-3.6-flash",
-                      "input": "Você é o classificador do sistema Conecta Voluntário. Analise o texto do usuário e classifique a intenção principal em UMA destas categorias: animais, pessoas com deficiencia, combate ao cancer, indefinido ou fora do escopo. Use animais quando o usuário quiser ajudar animais ou instituições de proteção animal. Use pessoas com deficiencia quando quiser ajudar pessoas com deficiência. Use combate ao cancer quando quiser ajudar pessoas afetadas pelo câncer ou instituições relacionadas. Use indefinido quando a pessoa demonstra vontade de ajudar, mas não fornece informações suficientes para identificar uma área. Use fora do escopo quando o texto não tiver relação com ajudar pessoas, animais ou organizações. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
+                      "input": "Você é o classificador do sistema Conecta Voluntário. Analise o texto do usuário e classifique a intenção principal em UMA destas categorias: animais, pessoas com deficiencia, combate ao cancer, indefinido ou fora do escopo. Use animais quando o usuário quiser ajudar animais ou instituições de proteção animal, incluindo doações de alimentos, ração, roupas, agasalhos, medicamentos, produtos de limpeza ou dinheiro. Use pessoas com deficiencia quando quiser ajudar pessoas com deficiência ou instituições relacionadas, incluindo doações de alimentos, roupas, agasalhos, medicamentos, materiais de limpeza ou dinheiro. Use combate ao cancer quando quiser ajudar pessoas afetadas pelo câncer ou instituições relacionadas, incluindo doações de alimentos, roupas, agasalhos, medicamentos ou dinheiro. Ajuda financeira pode ser destinada a qualquer uma das três categorias quando o usuário indicar a área que deseja ajudar. Use indefinido quando a pessoa demonstra vontade de ajudar, mas não fornece informações suficientes para identificar uma área. Use fora do escopo quando o texto não tiver relação com ajudar pessoas, animais ou organizações. Considere palavras com significado semelhante, como agasalho e roupa. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
                     """.formatted(textoVoluntario);
 
             HttpClient client = HttpClient.newBuilder()
@@ -37,7 +37,8 @@ public class ClassificadorIA {
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                System.out.println("Gemini indisponível. Usando modo de demonstração.");
+                System.out.println("Gemini HTTP " + response.statusCode());
+                System.out.println("Resposta Gemini: " + response.body());
                 return classificacaoLocal(textoVoluntario);
             }
             String resposta = response.body();
@@ -60,6 +61,7 @@ public class ClassificadorIA {
             }
             return categoria;
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Gemini indisponível. Usando modo de demonstração.");
             return classificacaoLocal(textoVoluntario);
         }
@@ -82,7 +84,8 @@ public class ClassificadorIA {
         }
         if (textoMinusculo.contains("deficiência")
                 || textoMinusculo.contains("deficiencia")
-                || textoMinusculo.contains("pcd")) {
+                || textoMinusculo.contains("pcd")
+                || textoMinusculo.contains("pessoas")){
             return "pessoas com deficiencia";
         }
         return "fora do escopo";
