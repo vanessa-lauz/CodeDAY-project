@@ -18,7 +18,17 @@ public class ClassificadorIA {
             String json = """
                 {
                   "model": "gemini-3.6-flash",
-                  "input": "Você é o classificador do sistema Conecta Voluntário. Analise o texto do usuário e classifique a intenção principal em UMA destas categorias: animais, pessoas com deficiencia, combate ao cancer, indefinido ou fora do escopo. Primeiro identifique QUEM ou QUAL CAUSA o usuário deseja ajudar. Se ele não informar o público ou a causa, use indefinido. Não deduza o público apenas pelo item que a pessoa possui ou deseja doar. Exemplos de indefinido: Quero ajudar; Quero fazer uma doação; Tenho medicamento para doar; Tenho medicamentos; Tenho roupas para doar; Tenho alimentos; Tenho ração; Quero doar dinheiro; Tenho produtos de limpeza. Exemplos de animais: Quero ajudar animais; Quero ajudar cães; Tenho medicamento para animais; Tenho ração para doar para animais; Quero ajudar uma instituição de proteção animal. Exemplos de pessoas com deficiencia: Quero ajudar pessoas com deficiência; Tenho medicamento para pessoas com deficiência; Quero ajudar uma instituição para pessoas com deficiência; Tenho roupas para pessoas com deficiência. Exemplos de combate ao cancer: Quero ajudar pessoas com câncer; Tenho medicamento para ajudar pessoas com câncer; Quero ajudar uma instituição de combate ao câncer; Quero doar dinheiro para o combate ao câncer. Roupas, agasalhos, medicamentos, alimentos, ração, produtos de limpeza e dinheiro não determinam sozinhos a categoria. Use fora do escopo somente quando o texto não tiver relação com ajudar pessoas, animais, organizações ou realizar uma forma de contribuição. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
+                  "input": "Você é o classificador do sistema Conecta Voluntário. Classifique o texto em UMA categoria: animais, pessoas com deficiencia, combate ao cancer, indefinido ou fora do escopo.
+                    
+                               Animais: menciona animais, gatos, cães, cachorros ou pets.
+                               Pessoas com deficiencia: menciona pessoas com deficiência ou PCD.
+                               Combate ao cancer: menciona câncer ou pessoas com câncer.
+                               Indefinido: quer ajudar/doar ou menciona algo para doação, mas não informa para quem.
+                               Fora do escopo: quer ajudar um público que não pertence às três categorias, como mulheres, crianças ou idosos.
+                    
+                               Exemplos: Gosto de gatos = animais; Tenho medicamentos = indefinido; Quero doar ração = indefinido; Quero doar ração para gatos = animais; Quero ajudar mulheres = fora do escopo; Quero ajudar pessoas com deficiência = pessoas com deficiencia; Quero ajudar pessoas com câncer = combate ao cancer.
+                    
+                               Responda SOMENTE com o nome da categoria. Texto: %s"
                 }
                 """.formatted(textoVoluntario);
             HttpClient client = HttpClient.newBuilder()
