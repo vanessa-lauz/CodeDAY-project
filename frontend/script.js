@@ -2,7 +2,12 @@ const botao = document.getElementById("botao");
 const texto = document.getElementById("texto");
 const resultado = document.getElementById("resultado");
 const status = document.getElementById("status");
-
+let aguardandoEsclarecimento = false;
+let textoAnterior = "";
+let textoParaEnviar = textoDigitado;
+if (aguardandoEsclarecimento) {
+    textoParaEnviar = textoAnterior + ". A pessoa esclareceu que quer ajudar " + textoDigitado + ".";
+}
 botao.addEventListener("click", async () => {
 
     const textoDigitado = texto.value.trim();
@@ -27,7 +32,7 @@ botao.addEventListener("click", async () => {
                 },
 
                 body: JSON.stringify({
-                    texto: textoDigitado
+                    texto: textoParaEnviar
                 })
             }
         );
@@ -37,13 +42,23 @@ botao.addEventListener("click", async () => {
         if (!resposta.ok) {
             throw new Error(dados.erro || "Erro ao consultar o servidor.");
         }
+        if (dados.precisaEsclarecimento) {
+            textoAnterior = textoDigitado;
+            aguardandoEsclarecimento = true;
+            resultado.innerHTML = `<h2>Precisamos de mais uma informação</h2><p>${dados.mensagem}</p>`;
+            status.textContent = "";
+            texto.value = "";
+            return;
+        }
+
         if (dados.mensagem) {
             resultado.innerHTML = `<h2>Não encontramos uma oportunidade</h2><p>${dados.mensagem}</p>`;
             status.textContent = "";
             return;
         }
         status.textContent = "";
-
+        aguardandoEsclarecimento = false;
+        textoAnterior = "";
         resultado.innerHTML = `
             <h2>Recomendamos:</h2>
 

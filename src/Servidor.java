@@ -81,6 +81,10 @@ public class Servidor {
                     enviarResposta(exchange, 200, "{\"mensagem\":\"Não encontramos uma oportunidade compatível. Tente descrever como gostaria de ajudar.\"}");
                     return;
                 }
+                if (categoria.equals("fora do escopo")) {
+                    enviarResposta(exchange, 200,"{\"mensagem\":\"Não encontramos uma oportunidade compatível. Tente descrever como gostaria de ajudar.\"}");
+                    return;
+                }
                 // Procura ONG compatível
                 ONG ong = recomendador.recomendar(categoria);
                 if (ong == null) {
