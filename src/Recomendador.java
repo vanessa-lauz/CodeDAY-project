@@ -16,18 +16,15 @@ public class Recomendador {
                     && ong.nome.startsWith("ASPA")) {
                 return ong;
             }
-
             if (categoria.equals("pessoas com deficiencia")
                     && ong.nome.startsWith("APAE")) {
                 return ong;
             }
-
             if (categoria.equals("combate ao cancer")
                     && ong.nome.startsWith("Liga")) {
                 return ong;
             }
         }
-
         return null;
     }
 }
