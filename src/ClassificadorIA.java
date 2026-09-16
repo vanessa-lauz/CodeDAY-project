@@ -23,8 +23,7 @@ public class ClassificadorIA {
             String json = """
                     {
                       "model": "gemini-3.6-flash",
-                      "input": "Classifique o texto abaixo em UMA destas categorias: animais, pessoas_com_deficiencia ou combate_ao_cancer. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
-                    }
+                      "input": "Você é o classificador do sistema Conecta Voluntário. Analise o texto do usuário e classifique a intenção principal em UMA destas categorias: animais, pessoas_com_deficiencia, combate_ao_cancer, indefinido ou fora_do_escopo. Use animais quando o usuário quiser ajudar animais ou instituições de proteção animal. Use pessoas_com_deficiencia quando quiser ajudar pessoas com deficiência. Use combate_ao_cancer quando quiser ajudar pessoas afetadas pelo câncer ou instituições relacionadas. Use indefinido quando a pessoa demonstra vontade de ajudar, mas não fornece informações suficientes para identificar uma área. Use fora_do_escopo quando o texto não tiver relação com ajudar pessoas, animais ou organizações. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
                     """.formatted(textoVoluntario);
 
             HttpClient client = HttpClient.newBuilder()
@@ -64,7 +63,9 @@ public class ClassificadorIA {
 
             if (!categoria.equals("animais")
                     && !categoria.equals("pessoas_com_deficiencia")
-                    && !categoria.equals("combate_ao_cancer")) {
+                    && !categoria.equals("combate_ao_cancer")
+                    && !categoria.equals("indefinido")
+                    && !categoria.equals("fora_do_escopo")) {
 
                 return classificacaoLocal(textoVoluntario);
             }
@@ -105,6 +106,6 @@ public class ClassificadorIA {
             return "pessoas_com_deficiencia";
         }
 
-        return "animais";
+        return "fora_do_escopo";
     }
 }
