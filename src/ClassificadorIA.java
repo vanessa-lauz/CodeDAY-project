@@ -18,7 +18,7 @@ public class ClassificadorIA {
             String json = """
         {
           "model": "gemini-3.6-flash",
-          "input": "Você é o classificador do sistema Conecta Voluntário. Analise o texto do usuário e classifique a intenção principal em UMA destas categorias: animais, pessoas com deficiencia, combate ao cancer, indefinido ou fora do escopo. Use animais quando o usuário quiser ajudar animais ou instituições de proteção animal, incluindo doações de alimentos, ração, roupas, agasalhos, medicamentos, produtos de limpeza ou dinheiro. Use pessoas com deficiencia quando quiser ajudar pessoas com deficiência ou instituições relacionadas, incluindo doações de alimentos, roupas, agasalhos, medicamentos, materiais de limpeza ou dinheiro. Use combate ao cancer quando quiser ajudar pessoas afetadas pelo câncer ou instituições relacionadas, incluindo doações de alimentos, roupas, agasalhos, medicamentos ou dinheiro. Ajuda financeira pode ser destinada a qualquer uma das três categorias quando o usuário indicar a área que deseja ajudar. Use indefinido quando a pessoa demonstra vontade de ajudar, mas não fornece informações suficientes para identificar uma área. Isso inclui quando ela menciona apenas um recurso ou item que deseja doar, como dinheiro, roupas, agasalhos, alimentos, medicamentos ou produtos de limpeza, sem indicar quem deseja ajudar. Use fora do escopo quando o texto não tiver relação com ajudar pessoas, animais ou organizações. Considere palavras com significado semelhante, como agasalho e roupa. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
+          "input": "Você é o classificador do sistema Conecta Voluntário. Analise o texto do usuário e classifique a intenção principal em UMA destas categorias: animais, pessoas com deficiencia, combate ao cancer, indefinido ou fora do escopo. Primeiro identifique QUEM ou QUAL CAUSA o usuário deseja ajudar. Se ele não informar o público ou a causa, use indefinido. Não deduza o público apenas pelo item que a pessoa possui ou deseja doar. Exemplos de indefinido: Quero ajudar; Quero fazer uma doação; Tenho medicamento para doar; Tenho medicamentos; Tenho roupas para doar; Tenho alimentos; Tenho ração; Quero doar dinheiro; Tenho produtos de limpeza. Exemplos de animais: Quero ajudar animais; Quero ajudar cães; Tenho medicamento para animais; Tenho ração para doar para animais; Quero ajudar uma instituição de proteção animal. Exemplos de pessoas com deficiencia: Quero ajudar pessoas com deficiência; Tenho medicamento para pessoas com deficiência; Quero ajudar uma instituição para pessoas com deficiência; Tenho roupas para pessoas com deficiência. Exemplos de combate ao cancer: Quero ajudar pessoas com câncer; Tenho medicamento para ajudar pessoas com câncer; Quero ajudar uma instituição de combate ao câncer; Quero doar dinheiro para o combate ao câncer. Roupas, agasalhos, medicamentos, alimentos, ração, produtos de limpeza e dinheiro não determinam sozinhos a categoria. Use fora do escopo somente quando o texto não tiver relação com ajudar pessoas, animais, organizações ou realizar uma forma de contribuição. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
         }
         """.formatted(textoVoluntario);
 
@@ -36,7 +36,11 @@ public class ClassificadorIA {
             System.out.println("JSON enviado: " + json);
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-
+            if (response.statusCode() == 429) {
+                System.out.println("Gemini HTTP 429 - limite de uso atingido.");
+                System.out.println("Resposta Gemini: " + response.body());
+                throw new RuntimeException("LIMITE_GEMINI");
+            }
             if (response.statusCode() != 200) {
                 System.out.println("Gemini HTTP " + response.statusCode());
                 System.out.println("Resposta Gemini: " + response.body());

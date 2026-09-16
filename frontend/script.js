@@ -115,11 +115,20 @@ form.addEventListener("submit", async (evento) => {
         );
 
         const dados = await resposta.json();
+       if (!resposta.ok) {
+           if (dados.erro === "limite_gemini") {
+               resultado.innerHTML = `
+                   <div class="card-ong">
+                       <h2>Serviço de IA temporariamente indisponível</h2>
+                       <p>${dados.mensagem}</p>
+                   </div>
+               `;
+               status.textContent = "";
+               return;
+           }
 
-        if (!resposta.ok) {
-            throw new Error(dados.erro || "Erro ao consultar o servidor.");
-        }
-
+           throw new Error(dados.erro || "Erro ao consultar o servidor.");
+       }
         if (dados.precisaEsclarecimento) {
             textoAnterior = textoDigitado;
             aguardandoEsclarecimento = true;

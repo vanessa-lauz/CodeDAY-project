@@ -75,7 +75,16 @@ public class Servidor {
                 }
                 System.out.println("Texto recebido: " + texto);
                 // API Gemini classifica se é uma categoria existente ou fora do escopo
-                String categoria = classificador.classificar(texto);
+                String categoria;
+                try {
+                    categoria = classificador.classificar(texto);
+                } catch (RuntimeException e) {
+                    if (e.getMessage().equals("LIMITE_GEMINI")) {
+                        enviarResposta(exchange, 429, "{\"erro\":\"limite_gemini\",\"mensagem\":\"O serviço de IA atingiu temporariamente o limite de uso. Isso não é um erro do sistema. Tente novamente em aproximadamente 1 minuto.\"}");
+                        return;
+                    }
+                    throw e;
+                }
                 System.out.println("Categoria identificada: " + categoria);
                 if (categoria.equals("fora do escopo")) {
                     enviarResposta(exchange, 200, "{\"mensagem\":\"Não encontramos uma oportunidade compatível. Tente descrever como gostaria de ajudar.\"}");
