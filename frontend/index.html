@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Conecta Voluntário</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -19,18 +17,70 @@
         Encontre uma forma de ajudar de acordo com seus interesses.
     </p>
 
-    <label for="texto">
-        Como você gostaria de ajudar?
-    </label>
+    <div class="progresso">
+        <span class="passo-indicador ativo" data-indicador="1">1. Seus dados</span>
+        <span class="passo-indicador" data-indicador="2">2. Como quer ajudar</span>
+    </div>
 
-    <textarea
-            id="texto"
-            placeholder="Ex.: Tenho ração para doar e gosto de animais..."
-    ></textarea>
+    <form id="formVoluntario" novalidate>
 
-    <button id="botao">
-        Encontrar onde ajudar
-    </button>
+        <section class="passo" data-passo="1">
+
+            <label for="nome">Nome</label>
+
+            <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    placeholder="Seu nome"
+                    required
+            >
+
+            <label for="idade">Idade</label>
+
+            <input
+                    type="number"
+                    id="idade"
+                    name="idade"
+                    min="14"
+                    max="110"
+                    placeholder="Ex.: 20"
+                    required
+            >
+
+            <button type="button" id="btnProximo" class="btn-primario">
+                Próximo
+            </button>
+
+        </section>
+
+        <section class="passo" data-passo="2" hidden>
+
+            <label for="texto">
+                Como você gostaria de contribuir?
+            </label>
+
+            <textarea
+                    id="texto"
+                    name="textoLivre"
+                    placeholder="Conte como você gostaria de contribuir. Você pode falar sobre doações, tempo, habilidades ou outras formas de ajuda."
+            ></textarea>
+
+            <div class="acoes">
+
+                <button type="button" id="btnVoltar" class="btn-secundario">
+                    Voltar
+                </button>
+
+                <button type="submit" id="botao" class="btn-primario">
+                    Encontrar onde ajudar
+                </button>
+
+            </div>
+
+        </section>
+
+    </form>
 
     <p id="status"></p>
 
