@@ -62,8 +62,12 @@ public class Servidor {
         // CRIA O SERVIDOR
         // =========================
 
+        int porta = Integer.parseInt(
+                System.getenv().getOrDefault("PORT", "8080")
+        );
+
         HttpServer server = HttpServer.create(
-                new InetSocketAddress(8080),
+                new InetSocketAddress("0.0.0.0", porta),
                 0
         );
 
@@ -194,7 +198,7 @@ public class Servidor {
         System.out.println();
         System.out.println("=================================");
         System.out.println("Servidor iniciado!");
-        System.out.println("http://localhost:8080");
+        System.out.println("Servidor iniciado na porta " + porta);
         System.out.println("Endpoint: POST /classificar");
         System.out.println("=================================");
     }
