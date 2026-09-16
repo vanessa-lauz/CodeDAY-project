@@ -18,57 +18,93 @@ public class ClassificadorIA {
 
     public String classificar(String textoVoluntario) throws Exception {
 
-        String json = """
-                {
-                  "model": "gemini-3.6-flash",
-                  "input": "Classifique o texto abaixo em UMA destas categorias: animais, pessoas_com_deficiencia ou combate_ao_cancer. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
-                }
-                """.formatted(textoVoluntario);
+        try {
 
-        HttpClient client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+            String json = """
+                    {
+                      "model": "gemini-3.6-flash",
+                      "input": "Classifique o texto abaixo em UMA destas categorias: animais, pessoas_com_deficiencia ou combate_ao_cancer. Responda SOMENTE com o nome da categoria, sem explicação. Texto: %s"
+                    }
+                    """.formatted(textoVoluntario);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        "https://generativelanguage.googleapis.com/v1/interactions"))
-                .header("Content-Type", "application/json")
-                .header("x-goog-api-key", apiKey)
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .timeout(Duration.ofSeconds(60))
-                .build();
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
 
-        HttpResponse<String> response =
-                client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(
+                            "https://generativelanguage.googleapis.com/v1/interactions"))
+                    .header("Content-Type", "application/json")
+                    .header("x-goog-api-key", apiKey)
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .timeout(Duration.ofSeconds(60))
+                    .build();
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException(
-                    "Erro na API Gemini. Status: " + response.statusCode()
-                            + "\n" + response.body()
-            );
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                System.out.println("Gemini indisponível. Usando modo de demonstração.");
+                return classificacaoLocal(textoVoluntario);
+            }
+
+            String resposta = response.body();
+
+            int inicio = resposta.lastIndexOf("\"text\":\"") + 8;
+            int fim = resposta.indexOf("\"", inicio);
+
+            if (inicio < 8 || fim == -1) {
+                return classificacaoLocal(textoVoluntario);
+            }
+
+            String categoria = resposta.substring(inicio, fim)
+                    .trim()
+                    .toLowerCase()
+                    .replace(".", "");
+
+            if (!categoria.equals("animais")
+                    && !categoria.equals("pessoas_com_deficiencia")
+                    && !categoria.equals("combate_ao_cancer")) {
+
+                return classificacaoLocal(textoVoluntario);
+            }
+
+            return categoria;
+
+        } catch (Exception e) {
+
+            System.out.println("Gemini indisponível. Usando modo de demonstração.");
+            return classificacaoLocal(textoVoluntario);
+        }
+    }
+
+    private String classificacaoLocal(String texto) {
+
+        String textoMinusculo = texto.toLowerCase();
+
+        if (textoMinusculo.contains("animal")
+                || textoMinusculo.contains("ração")
+                || textoMinusculo.contains("cachorro")
+                || textoMinusculo.contains("gato")) {
+
+            return "animais";
         }
 
-        String resposta = response.body();
+        if (textoMinusculo.contains("câncer")
+                || textoMinusculo.contains("cancer")
+                || textoMinusculo.contains("medicamento")
+                || textoMinusculo.contains("medicamentos")) {
 
-        int inicio = resposta.lastIndexOf("\"text\":\"") + 8;
-        int fim = resposta.indexOf("\"", inicio);
-
-        if (inicio < 8 || fim == -1) {
-            throw new RuntimeException("Não foi possível extrair a categoria da resposta da IA.");
+            return "combate_ao_cancer";
         }
 
-        String categoria = resposta.substring(inicio, fim).trim().toLowerCase();
-        categoria = categoria.replace(".", "");
+        if (textoMinusculo.contains("deficiência")
+                || textoMinusculo.contains("deficiencia")
+                || textoMinusculo.contains("pcd")) {
 
-        if (!categoria.equals("animais")
-                && !categoria.equals("pessoas_com_deficiencia")
-                && !categoria.equals("combate_ao_cancer")) {
-
-            throw new RuntimeException(
-                    "Categoria inválida retornada pela IA: " + categoria
-            );
+            return "pessoas_com_deficiencia";
         }
 
-        return categoria;
+        return "animais";
     }
 }
