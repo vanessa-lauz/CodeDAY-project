@@ -3,6 +3,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.nio.charset.StandardCharsets;
 
 public class ClassificadorIA {
     private final String apiKey;
@@ -25,11 +26,10 @@ public class ClassificadorIA {
                     .build();
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(
-                            "https://generativelanguage.googleapis.com/v1/interactions"))
-                    .header("Content-Type", "application/json")
+                    .uri(URI.create("https://generativelanguage.googleapis.com/v1/interactions"))
+                    .header("Content-Type", "application/json; charset=utf-8")
                     .header("x-goog-api-key", apiKey)
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
                     .timeout(Duration.ofSeconds(60))
                     .build();
             System.out.println("JSON enviado: " + json);
