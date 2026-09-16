@@ -121,6 +121,7 @@ form.addEventListener("submit", async (evento) => {
                    <div class="card-ong">
                        <h2>Serviço de IA temporariamente indisponível</h2>
                        <p>${dados.mensagem}</p>
+                       <p>A cota de uso da IA foi atingida. O restante do sistema continua funcionando normalmente.</p>
                    </div>
                `;
                status.textContent = "";
