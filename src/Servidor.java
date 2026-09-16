@@ -1,8 +1,8 @@
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
-import java.io.IOException;
+import com.sun.net.httpserver.HttpExchange;//para requisição e resposta HTTP(dados)
+import com.sun.net.httpserver.HttpServer;//para criar server HTTP em java
+import java.io.IOException;//para erros
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.net.InetSocketAddress;//para endereço/IP e porta pro servidor
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -118,7 +118,7 @@ public class Servidor {
         System.out.println("Endpoint: POST /classificar");
         System.out.println("=================================");
     }
-    // PEGA O TEXTO DENTRO DO JSON
+    //extrai texto do JSON
     private static String extrairTexto(String body) {
         String marcador = "\"texto\":\"";
         int inicio = body.indexOf(marcador);
@@ -132,7 +132,7 @@ public class Servidor {
         }
         return body.substring(inicio, fim);
     }
-    // MONTA O JSON QUE SERÁ DEVOLVIDO
+    //monta JSON
     private static void enviarArquivo(
             com.sun.net.httpserver.HttpExchange exchange,
             String caminho,
@@ -165,7 +165,7 @@ public class Servidor {
             necessidades
                     .append("\"")
                     .append(
-                            escaparJson(
+                            quebraJson(
                                     ong.getNecessidades().get(i)
                             )
                     )
@@ -179,12 +179,12 @@ public class Servidor {
                   "necessidades": [%s]
                 }
                 """.formatted(
-                escaparJson(categoria),
-                escaparJson(ong.nome),
-                escaparJson(ong.descricao),
+                quebraJson(categoria),
+                quebraJson(ong.nome),
+                quebraJson(ong.descricao),
                 necessidades);
     }
-    // ENVIA RESPOSTA
+    //envia resposta
     private static void enviarResposta(HttpExchange exchange, int status, String resposta) throws IOException {
         byte[] bytes = resposta.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -193,14 +193,14 @@ public class Servidor {
             output.write(bytes);
         }
     }
-    // PERMITE O FRONTEND ACESSAR O BACKEND
+    //permite front acessar o back
     private static void adicionarCors(HttpExchange exchange) {
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, OPTIONS");
         exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
     }
-    // EVITA QUE CARACTERES DO TEXTO QUEBREM O JSON
-    private static String escaparJson(String texto) {
+    //evita quebre de caracteres no JSON
+    private static String quebraJson(String texto) {
         return texto.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }
