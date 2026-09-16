@@ -26,7 +26,7 @@ botao.addEventListener("click", async () => {
 
     try {
 
-        const resposta = await fetch("https://codeday-project.onrender.com/classificar", {
+        const resposta = await fetch("https://codeday-project2.onrender.com/classificar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ texto: textoParaEnviar })
