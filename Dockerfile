@@ -9,7 +9,7 @@ COPY src /app/src
 
 #compíla os arquivos java
 RUN javac -d /app/out /app/src/*.java
-
-EXPOSE 10000 #diz a porta usada pelo server
+#diz a porta usada pelo server
+EXPOSE 10000
 #quando container inicia, executa esse CoManDo e inicia o servidor.
 CMD ["java", "-cp", "/app/out", "Servidor"]
