@@ -62,10 +62,10 @@ public class ClassificadorIA {
                     .replace(".", "");
 
             if (!categoria.equals("animais")
-                    && !categoria.equals("pessoas_com_deficiencia")
-                    && !categoria.equals("combate_ao_cancer")
+                    && !categoria.equals("pessoas com deficiencia")
+                    && !categoria.equals("combate ao cancer")
                     && !categoria.equals("indefinido")
-                    && !categoria.equals("fora_do_escopo")) {
+                    && !categoria.equals("fora do escopo")) {
 
                 return classificacaoLocal(textoVoluntario);
             }

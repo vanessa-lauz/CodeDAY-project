@@ -17,12 +17,12 @@ public class Recomendador {
                 return ong;
             }
 
-            if (categoria.equals("pessoas_com_deficiencia")
+            if (categoria.equals("pessoas com deficiencia")
                     && ong.nome.startsWith("APAE")) {
                 return ong;
             }
 
-            if (categoria.equals("combate_ao_cancer")
+            if (categoria.equals("combate ao cancer")
                     && ong.nome.startsWith("Liga")) {
                 return ong;
             }
